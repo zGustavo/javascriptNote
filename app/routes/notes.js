@@ -49,7 +49,11 @@ router.put('/:id', withAuth, async (req, res) => {
     try {
         let note = await Note.findById(id);
         if(isOwner(req.user, note)) {
-
+            let note = await Note.findOneAndUpdate(id, 
+                { $set: { title: title, body: body } },
+                { upsert: true, 'new': true}
+            );
+            res.json(note);
         } else {
             res.status(403).json( { error: "Permission denied"});
         }
