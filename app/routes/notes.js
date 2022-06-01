@@ -15,7 +15,7 @@ router.post('/', withAuth, async (req, res) => {
     } catch (error) {
         res.status(500).json( {error: "Problem to create a new note"});
     }
-})
+});
 
 // baixa uma nota
 router.get('/:id', withAuth, async (req, res) => {
@@ -29,7 +29,7 @@ router.get('/:id', withAuth, async (req, res) => {
     } catch (error) {
         res.status(500).json({error: "Problem to get a new note"});
     }
-})
+});
 
 // baixa uma lista de notas
 router.get('/', withAuth, async (req, res) => {
@@ -39,7 +39,7 @@ router.get('/', withAuth, async (req, res) => {
     } catch (error) {
         res.status(500).json({error: error});
     }
-})
+});
 
 // atualiza notas
 router.put('/:id', withAuth, async (req, res) => {
@@ -60,7 +60,23 @@ router.put('/:id', withAuth, async (req, res) => {
     } catch (error) {
         res.status(500).json( { error: "Problem to update a note" });
     }
-})
+});
+
+// Deletando uma nota
+router.delete('/:id', withAuth, async (req, res) => {
+    const { id } = req.params;
+    try {
+        let note = await Note.findById(id);
+        if(isOwner(req.user, note)) {
+            await note.delete();
+            res.json( { message: "OK!" }).status(204);
+        } else {
+            res.status(403).json( { error: "Permission denied" });
+        }
+    } catch (error) {
+        res.status(500).json({error: "Problem to delete a note"});
+    }
+});
 
 
 const isOwner = (user, note) => {
