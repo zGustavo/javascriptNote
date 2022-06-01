@@ -12,4 +12,7 @@ let noteSchema = new mongoose.Schema({
     } 
 })
 
+// ajuda o mongoose a procurar a query Search
+noteSchema.index({'title': 'text', 'body': 'text'});
+
 module.exports = mongoose.model('Note', noteSchema);
